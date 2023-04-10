@@ -11,12 +11,6 @@ class GameStatus(Enum):
     complete = 3
 
 
-class GameResult(Enum):
-    pending = "pending"
-    won = "won"
-    lost = "lost"
-
-
 def fetch_scoreboard(game_date=None):
     # Use today's date by default
     if not game_date:

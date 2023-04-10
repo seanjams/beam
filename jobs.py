@@ -1,44 +1,16 @@
 import pendulum
-from app import app
+import logging
 from db import db, JobRun, JobStatus
 from hue import light_the_beam, reset_beam
 from nba import fetch_kings_game, game_winner
-from scheduler import scheduler
+from scheduler import scheduler, every_ten_minutes
 
-
-# add better logging
-def check_for_winner():
-    print("LIGHT THE BEAM")
-
-    todays_date = pendulum.now("US/Pacific").format("YYYY-MM-DD")
-    response = fetch_kings_game(todays_date)
-    if response["status"] == "success":
-        job_status = JobStatus.success
-
-        winner = game_winner(response["game"])
-        if winner and winner == "Kings":
-            light_the_beam()
-        else:
-            reset_beam()
-
-        
-    else:
-        job_status = JobStatus.error
-        reset_beam()
-
-    # save new job run to DB
-    with app.app_context():
-        run = JobRun(
-            name="check_for_winner",
-            status=job_status
-        )
-        db.session.add(run)
-        db.session.commit()
+log = logging.getLogger(__name__)
 
 
 # add better logging
 def check_for_daily_kings_game():
-    print("CHECKING FOR DAILY GAME")
+    log.info("CHECKING FOR DAILY GAME")
 
     todays_date = pendulum.now("US/Pacific").format("YYYY-MM-DD")
     response = fetch_kings_game(todays_date)
@@ -47,14 +19,15 @@ def check_for_daily_kings_game():
 
         # start/stop polling interval job
         if response["game"]:
+            log.info("FOUND KINGS GAME")
+            
             scheduler.add_job(
                 id="check_for_winner",
                 func=check_for_winner,
-                trigger="interval",
-                seconds=10,
-                misfire_grace_time=900,
+                **every_ten_minutes
             )
         else:
+            log.info("NO KINGS GAME FOUND")
             scheduler.delete_job(id="check_for_winner")
             reset_beam()
     else:
@@ -62,10 +35,39 @@ def check_for_daily_kings_game():
         
     
     # save new job run to DB
-    with app.app_context():
-        run = JobRun(
-            name="check_for_daily_kings_game",
-            status=job_status
-        )
-        db.session.add(run)
-        db.session.commit()
+    run = JobRun(
+        name="check_for_daily_kings_game",
+        status=job_status
+    )
+    run.save()
+
+
+# add better logging
+def check_for_winner():
+    log.info("CHECKING FOR WINNER")
+
+    todays_date = pendulum.now("US/Pacific").format("YYYY-MM-DD")
+    response = fetch_kings_game(todays_date)
+    if response["status"] == "success":
+        job_status = JobStatus.success
+        winner = game_winner(response["game"])
+        if winner and winner == "Kings":
+            log.info("KINGS WIN!! LIGHT THE BEAM")
+            light_the_beam()
+        elif winner:
+            log.info("KINGS LOSE :(")
+            reset_beam()
+        else:
+            log.info("No winner yet...")
+            reset_beam()
+    else:
+        # No action on light (for now)
+        job_status = JobStatus.error
+
+    # save new job run to DB
+    run = JobRun(
+        name="check_for_winner",
+        status=job_status
+    )
+    run.save()
+

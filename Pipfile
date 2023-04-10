@@ -6,13 +6,13 @@ name = "pypi"
 [packages]
 flask-apscheduler = "*"
 flask-sqlalchemy = "*"
-ipdb = "*"
 nba-api = "*"
 phue = "*"
-ipython = "*"
 pendulum = "*"
 
 [dev-packages]
+ipdb = "*"
+flask-shell-ipython = "*"
 
 [requires]
 python_version = "3.10"

@@ -3,6 +3,9 @@ from phue import Bridge
 
 from config import HUE_BRIDGE_IP, HUE_BRIDGE_USERNAME
 
+# Create Bridge
+bridge = Bridge(ip=HUE_BRIDGE_IP, username=HUE_BRIDGE_USERNAME)
+
 # def random_hex():
 #     r = random.randint(0,255)
 #     g = random.randint(0,255)
@@ -44,27 +47,19 @@ def convert_hex(hex_code):
     
         return (x_final, y_final)
 
-# cache this
-def get_bridge():
-    bridge = Bridge(ip=HUE_BRIDGE_IP, username=HUE_BRIDGE_USERNAME)
-    bridge.connect()
-    return bridge
-
 def set_color(bridge, light_id, hex_code):
     color_coords = convert_hex(hex_code)
     bridge.set_light(light_id, 'bri', 200)
     bridge.set_light(light_id, 'xy', color_coords)
 
 def light_the_beam(light_id=None):
-    bridge = get_bridge()
-    hue = "#660066"
-    set_color(bridge, 1, hue)
-    set_color(bridge, 2, hue)
-    set_color(bridge, 3, hue)
+    hue = "#660066"  # purple
+    # for light_id in (1, 2, 3):
+    for light_id in (1, 2):
+        set_color(bridge, light_id, hue)
 
 def reset_beam(light_id=None):
-    bridge = get_bridge()
-    hue = "#eedc9c"
-    set_color(bridge, 1, hue)
-    set_color(bridge, 2, hue)
-    set_color(bridge, 3, hue)
+    hue = "#efc070"  # warm yellow
+    # for light_id in (1, 2, 3):
+    for light_id in (1, 2):
+        set_color(bridge, light_id, hue)

@@ -1,4 +1,5 @@
 import enum
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Column, Integer, DateTime, Enum
 from sqlalchemy.sql import func
@@ -27,3 +28,8 @@ class JobRun(db.Model):
             "name": self.name,
             "status": self.status.name,
         }
+    
+    def save(self):
+        with current_app.app_context():
+            db.session.add(self)
+            db.session.commit()
