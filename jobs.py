@@ -9,42 +9,8 @@ log = logging.getLogger(__name__)
 
 
 # add better logging
-def check_for_daily_kings_game():
-    log.info("CHECKING FOR DAILY GAME")
-
-    todays_date = pendulum.now("US/Pacific").format("YYYY-MM-DD")
-    response = fetch_kings_game(todays_date)
-    if response["status"] == "success":
-        job_status = JobStatus.success
-
-        # start/stop polling interval job
-        if response["game"]:
-            log.info("FOUND KINGS GAME")
-            
-            scheduler.add_job(
-                id="check_for_winner",
-                func=check_for_winner,
-                **every_ten_minutes
-            )
-        else:
-            log.info("NO KINGS GAME FOUND")
-            scheduler.delete_job(id="check_for_winner")
-            reset_beam()
-    else:
-        job_status = JobStatus.error
-        
-    
-    # save new job run to DB
-    run = JobRun(
-        name="check_for_daily_kings_game",
-        status=job_status
-    )
-    run.save()
-
-
-# add better logging
 def check_for_winner():
-    log.info("CHECKING FOR WINNER")
+    log.info("Checking for winner...")
 
     todays_date = pendulum.now("US/Pacific").format("YYYY-MM-DD")
     response = fetch_kings_game(todays_date)
@@ -52,10 +18,10 @@ def check_for_winner():
         job_status = JobStatus.success
         winner = game_winner(response["game"])
         if winner and winner == "Kings":
-            log.info("KINGS WIN!! LIGHT THE BEAM")
+            log.info("KINGS WIN!! LIGHT THE BEAM!!!")
             light_the_beam()
         elif winner:
-            log.info("KINGS LOSE :(")
+            log.info("Kings Lose :(")
             reset_beam()
         else:
             log.info("No winner yet...")
@@ -71,3 +37,35 @@ def check_for_winner():
     )
     run.save()
 
+
+# add better logging
+def check_for_daily_kings_game():
+    log.info("Checking for daily game...")
+
+    todays_date = pendulum.now("US/Pacific").format("YYYY-MM-DD")
+    response = fetch_kings_game(todays_date)
+    if response["status"] == "success":
+        job_status = JobStatus.success
+
+        # start/stop polling interval job
+        if response["game"]:
+            log.info("Found Kings game.")
+            scheduler.add_job(
+                id="check_for_winner",
+                func=check_for_winner,
+                **every_ten_minutes
+            )
+        else:
+            log.info("No Kings game found.")
+            if scheduler.get_job("check_for_winner"):
+                scheduler.delete_job(id="check_for_winner")
+            reset_beam()
+    else:
+        job_status = JobStatus.error
+    
+    # save new job run to DB
+    run = JobRun(
+        name="check_for_daily_kings_game",
+        status=job_status
+    )
+    run.save()

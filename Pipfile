@@ -9,6 +9,7 @@ flask-sqlalchemy = "*"
 nba-api = "*"
 phue = "*"
 pendulum = "*"
+gunicorn = "*"
 
 [dev-packages]
 ipdb = "*"
