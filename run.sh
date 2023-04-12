@@ -3,8 +3,8 @@
 # Go to beam repository
 cd $HOME/Documents/code/beam
 
-# activate virtualenv
-pipenv shell
+# install dependencies
+pipenv install
 
-# start gunicorn
-gunicorn -w 1 "main:app"
+# run gunicorn
+pipenv run gunicorn -w 1 "main:app"
