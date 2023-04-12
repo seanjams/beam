@@ -1,5 +1,5 @@
 import enum
-from app import app
+from config import app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Column, Integer, DateTime, Enum, JSON
 from sqlalchemy.sql import func

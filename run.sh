@@ -7,4 +7,4 @@ cd $HOME/Documents/code/beam
 pipenv install
 
 # run gunicorn
-pipenv run gunicorn -w 1 "main:app"
+pipenv run gunicorn -w 1 "app:app"

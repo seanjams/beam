@@ -1,6 +1,7 @@
-import pendulum
 import logging
-from db import db, JobRun, JobStatus
+import pendulum
+
+from db import JobRun, JobStatus
 from hue import light_the_beam, reset_beam
 from nba import fetch_kings_game, game_winner
 from scheduler import scheduler, every_ten_minutes

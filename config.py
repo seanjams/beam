@@ -1,3 +1,4 @@
+from flask import Flask
 import os
 
 
@@ -19,3 +20,7 @@ if not HUE_BRIDGE_IP or not HUE_BRIDGE_USERNAME:
 class Config:
     SCHEDULER_API_ENABLED = True
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
+
+# create app
+app = Flask(__name__)
+app.config.from_object(Config())
