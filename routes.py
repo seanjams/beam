@@ -9,6 +9,6 @@ def init_routes(app):
     @app.route('/job_runs/<int:run_id>')
     def retrieve_job_run(run_id):
         with app.app_context():
-            if run := JobRun.query.get(run_id):
-                return run.json()
-            return {}
+            run = JobRun.query.get(run_id)
+            return run.json() if run else {}
+
