@@ -34,8 +34,7 @@ scheduler.start()
 # init routes
 init_routes(app)
 
-# kick off initial job
-scheduler.run_job("check_for_daily_kings_game")
-
 if __name__ == "__main__":
+    # kick off initial job
+    scheduler.run_job("check_for_daily_kings_game")
     app.run()
