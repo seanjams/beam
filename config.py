@@ -8,6 +8,9 @@ class NoHueBridgeCredentials(Exception):
 # DB url
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///db.sqlite")
 
+# DB url
+RUN_SCHEDULER = os.getenv("RUN_SCHEDULER")
+
 # HUE Config
 HUE_BRIDGE_IP = os.getenv("HUE_BRIDGE_IP")
 HUE_BRIDGE_USERNAME = os.getenv("HUE_BRIDGE_USERNAME")
