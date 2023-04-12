@@ -1,7 +1,7 @@
 import enum
 from app import app
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Column, Integer, DateTime, Enum
+from sqlalchemy import String, Column, Integer, DateTime, Enum, JSON
 from sqlalchemy.sql import func
 
 db = SQLAlchemy()
@@ -20,6 +20,7 @@ class JobRun(db.Model):
     )
     name = Column(String, nullable=False)
     status = Column(Enum(JobStatus), nullable=False)
+    data = Column(JSON)
 
     def json(self):
         return {

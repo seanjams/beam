@@ -6,12 +6,9 @@ from config import HUE_BRIDGE_IP, HUE_BRIDGE_USERNAME
 # Create Bridge
 bridge = Bridge(ip=HUE_BRIDGE_IP, username=HUE_BRIDGE_USERNAME)
 
-# def random_hex():
-#     r = random.randint(0,255)
-#     g = random.randint(0,255)
-#     b = random.randint(0,255)
-#     hex = "#%02X%02X%02X" % (r, g, b)
-#     return hex
+BEAM_LIGHT_NAME = "Porch Beam"
+KINGS_PURPLE = "#660066"
+WARM_YELLOW = "#efc070"
 
 # https://gist.github.com/error454/6b94c46d1f7512ffe5ee
 def enhance_color(normalized):
@@ -46,20 +43,32 @@ def convert_hex(hex_code):
         y_final = y / (x + y + z)
     
         return (x_final, y_final)
+    
+def get_porch_beam():
+    return bridge["Porch Beam"]
 
-def set_color(bridge, light_id, hex_code):
-    color_coords = convert_hex(hex_code)
-    bridge.set_light(light_id, 'bri', 200)
-    bridge.set_light(light_id, 'xy', color_coords)
+def set_color(light, hex_code):
+    if light.on:
+        light.on = True
+        light.xy = convert_hex(hex_code)
 
 def light_the_beam(light_id=None):
-    hue = "#660066"  # purple
-    # for light_id in (1, 2, 3):
-    for light_id in (1, 2):
-        set_color(bridge, light_id, hue)
+    light = get_porch_beam()
+    if not light.on:
+        light.on = True
+    set_color(light, KINGS_PURPLE)
 
 def reset_beam(light_id=None):
-    hue = "#efc070"  # warm yellow
-    # for light_id in (1, 2, 3):
-    for light_id in (1, 2):
-        set_color(bridge, light_id, hue)
+    light = get_porch_beam()
+    # turn back to whatever it was before beam,
+    # default to warm yellow
+    if not light.on:
+        light.on = True
+    set_color(light, WARM_YELLOW)
+
+# def random_hex():
+#     r = random.randint(0,255)
+#     g = random.randint(0,255)
+#     b = random.randint(0,255)
+#     hex = "#%02X%02X%02X" % (r, g, b)
+#     return hex

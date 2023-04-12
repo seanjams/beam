@@ -18,24 +18,32 @@ def check_for_winner():
         job_status = JobStatus.success
         winner = game_winner(response["game"])
         if winner and winner == "Kings":
-            log.info("KINGS WIN!! LIGHT THE BEAM!!!")
+            msg = "KINGS WIN!! LIGHT THE BEAM!!!"
             light_the_beam()
         elif winner:
-            log.info("Kings Lose :(")
+            msg = "Kings Lose. Resetting Beam :("
             reset_beam()
         else:
-            log.info("No winner yet...")
-            reset_beam()
+            # # No action on light in case game not finished (for now)
+            msg = "No winner yet..."
     else:
-        # No action on light (for now)
+        # No action on light in case of error (for now)
+        msg = f"Error, fetch_kings_game returned {response['status_code']}"
         job_status = JobStatus.error
 
     # save new job run to DB
     run = JobRun(
         name="check_for_winner",
-        status=job_status
+        status=job_status,
+        data={
+            "game_winner_response": response,
+            "message": msg
+        }
     )
     run.save()
+
+    # log output
+    log.info(msg)
 
 
 # add better logging
@@ -49,23 +57,32 @@ def check_for_daily_kings_game():
 
         # start/stop polling interval job
         if response["game"]:
-            log.info("Found Kings game.")
+            msg = "Found Kings game. Adding job check_for_winner."
             scheduler.add_job(
                 id="check_for_winner",
                 func=check_for_winner,
                 **every_ten_minutes
             )
         else:
-            log.info("No Kings game found.")
+            msg = "No Kings game found."
             if scheduler.get_job("check_for_winner"):
+                msg += " Deleting job check_for_winner."
                 scheduler.delete_job(id="check_for_winner")
             reset_beam()
     else:
+        msg = f"Error, fetch_kings_game returned {response['status_code']}"
         job_status = JobStatus.error
     
     # save new job run to DB
     run = JobRun(
         name="check_for_daily_kings_game",
-        status=job_status
+        status=job_status,
+        data={
+            "game_winner_response": response,
+            "message": msg
+        }
     )
     run.save()
+
+    # log output
+    log.info(msg)
