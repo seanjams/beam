@@ -7,7 +7,7 @@ from config import HUE_BRIDGE_IP, HUE_BRIDGE_USERNAME
 bridge = Bridge(ip=HUE_BRIDGE_IP, username=HUE_BRIDGE_USERNAME)
 
 BEAM_LIGHT_NAME = "Porch Beam"
-KINGS_PURPLE = "#660066"
+KINGS_PURPLE = "#5A2D81"
 WARM_YELLOW = "#efc070"
 
 # https://gist.github.com/error454/6b94c46d1f7512ffe5ee
