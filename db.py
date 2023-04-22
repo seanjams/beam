@@ -1,23 +1,36 @@
 import enum
-from config import app
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Column, Integer, DateTime, Enum, JSON
+from sqlalchemy import Boolean, String, Column, DateTime, Enum, Integer, JSON
 from sqlalchemy.sql import func
+
+from config import app
 
 db = SQLAlchemy()
 
-class JobStatus(enum.Enum):
-    error = 0
-    success = 1
-
-class JobRun(db.Model):
-    __tablename__ = "job_runs"
+# Base class for models with app context
+class Model(db.Model):
+    __abstract__ = True
 
     id = Column(Integer, primary_key=True)
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now()
     )
+
+    def save(self):
+        with app.app_context():
+            db.session.add(self)
+            db.session.commit()
+
+
+class JobStatus(enum.Enum):
+    error = 0
+    success = 1
+
+
+class JobRun(Model):
+    __tablename__ = "job_runs"
+
     name = Column(String, nullable=False)
     status = Column(Enum(JobStatus), nullable=False)
     data = Column(JSON)
@@ -29,8 +42,24 @@ class JobRun(db.Model):
             "name": self.name,
             "status": self.status.name,
         }
-    
-    def save(self):
-        with app.app_context():
-            db.session.add(self)
-            db.session.commit()
+
+
+class LightStatus(Model):
+    __tablename__ = "light_status"
+
+    name = Column(String, nullable=False)
+    on = Column(Boolean, default=False)
+    hue = Column(Integer, nullable=False)
+    brightness = Column(Integer, nullable=False)
+    saturation = Column(Integer, nullable=False)
+
+    def json(self):
+        return {
+            "id": self.id,
+            "created_at": self.created_at.isoformat(),
+            "name": self.name,
+            "on": self.on,
+            "hue": self.hue,
+            "brightness": self.brightness,
+            "saturation": self.saturation,
+        }

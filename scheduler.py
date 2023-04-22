@@ -30,10 +30,10 @@ every_ten_minutes = {
     "minutes": 10,
     "misfire_grace_time": 900,
 }
-    
-everyday_at_noon = {
+
+everyday_at_4am = {
     "trigger": "cron",
-    "hour": 12,
+    "hour": 4,
     "minute": 0,
     "misfire_grace_time": 900,
 }

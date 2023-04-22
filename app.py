@@ -1,12 +1,11 @@
 import logging
-import os
 import sys
 
 from config import app, RUN_SCHEDULER
 from db import db
 from jobs import check_for_daily_kings_game
 from routes import init_routes
-from scheduler import scheduler, everyday_at_noon
+from scheduler import everyday_at_4am, scheduler
 
 # init logging
 logging.basicConfig(
@@ -34,7 +33,7 @@ def schedule_jobs():
     scheduler.add_job(
         id="check_for_daily_kings_game",
         func=check_for_daily_kings_game,
-        **everyday_at_noon
+        **everyday_at_4am
     )
     # run once right away
     scheduler.run_job("check_for_daily_kings_game")
