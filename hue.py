@@ -47,10 +47,7 @@ def light_the_beam():
 def reset_beam():
     # turn back to whatever it was yesterday, or do nothing
     light = get_porch_beam()
-    saved_configuration = LightStatus.query.filter(
-        LightStatus.created_at.between(yesterdays_date(), todays_date())
-    ).order_by(desc('created_at')).first()
-
+    saved_configuration = LightStatus.get_last_saved()
     if saved_configuration:
         light.on = saved_configuration.on
         light.brightness = saved_configuration.brightness

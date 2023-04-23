@@ -1,7 +1,8 @@
 import enum
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Boolean, String, Column, DateTime, Enum, Integer, JSON
+from sqlalchemy import Boolean, desc, Column, DateTime, Enum, Integer, JSON, String
 from sqlalchemy.sql import func
+from utils import todays_date, yesterdays_date
 
 from config import app
 
@@ -63,3 +64,11 @@ class LightStatus(Model):
             "brightness": self.brightness,
             "saturation": self.saturation,
         }
+    
+    @classmethod
+    def get_last_saved(cls):
+        with app.app_context():
+            return cls.query.filter(
+                cls.created_at.between(yesterdays_date(), todays_date())
+            ).order_by(desc('created_at')).first()
+
