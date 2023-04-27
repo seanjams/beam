@@ -25,8 +25,10 @@ with app.app_context():
 # init routes
 init_routes(app)
 
-# init scheduler
+# init scheduler (not called when running flask shell)
 def schedule_jobs():
+    scheduler.init_app(app)
+    scheduler.start()
     if scheduler.get_job("check_for_daily_kings_game"):
         return
     # add job
@@ -38,8 +40,7 @@ def schedule_jobs():
     # run once right away
     scheduler.run_job("check_for_daily_kings_game")
 
-scheduler.init_app(app)
-scheduler.start()
+# run app with ./run.sh script
 if RUN_SCHEDULER:
     schedule_jobs()
 

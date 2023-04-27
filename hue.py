@@ -1,9 +1,8 @@
 from phue import Bridge
-from sqlalchemy import desc
 
 from db import LightStatus
 from config import HUE_BRIDGE_IP, HUE_BRIDGE_USERNAME
-from utils import convert_hex, todays_date, yesterdays_date
+from utils import convert_hex
 
 
 # Create Bridge
@@ -45,7 +44,7 @@ def light_the_beam():
     set_color(light, KINGS_PURPLE)
 
 def reset_beam():
-    # turn back to whatever it was yesterday, or do nothing
+    # turn back to whatever it was yesterday, or warm yellow
     light = get_porch_beam()
     saved_configuration = LightStatus.get_last_saved()
     if saved_configuration:
@@ -53,7 +52,7 @@ def reset_beam():
         light.brightness = saved_configuration.brightness
         light.saturation = saved_configuration.saturation
         light.hue = saved_configuration.hue        
-    # else:
-    #     set_color(light, WARM_YELLOW)
+    else:
+        set_color(light, WARM_YELLOW)
 
 

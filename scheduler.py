@@ -3,6 +3,7 @@ from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_apscheduler import APScheduler
 from pytz import utc
+
 from config import DATABASE_URL
 
 # initialize scheduler
