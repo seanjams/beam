@@ -8,7 +8,7 @@ status:
 	sudo systemctl status lightthebeam.service
 
 start:
-	sudo systemctl status lightthebeam.service
+	sudo systemctl start lightthebeam.service
 
 stop:
-	sudo systemctl status lightthebeam.service
+	sudo systemctl stop lightthebeam.service
