@@ -12,8 +12,7 @@ log = logging.getLogger(__name__)
 def check_for_winner():
     log.info("Checking for winner...")
 
-    todays_date = pendulum.now("US/Pacific").format("YYYY-MM-DD")
-    response = fetch_kings_game(todays_date)
+    response = fetch_kings_game(todays_date())
     if response["status"] == "success":
         job_status = JobStatus.success
         winner = game_winner(response["game"])

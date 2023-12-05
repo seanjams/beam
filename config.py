@@ -8,7 +8,7 @@ class NoHueBridgeCredentials(Exception):
 # DB url
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///db.sqlite")
 
-# DB url
+# Should run scheduler on startup
 RUN_SCHEDULER = os.getenv("RUN_SCHEDULER")
 
 # HUE Config
