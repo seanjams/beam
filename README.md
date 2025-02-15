@@ -8,22 +8,30 @@ For RaspberryPi, adjust as needed for mac setup.
 sudo nano /lib/systemd/system/lightthebeam.service
 ```
 
-Copy the following contents and save. This will call `./run.sh` on system boot:
+Copy the following contents and save.
 ```
 [Unit]
 Description=Light the Beam
-After=multi-user.target
+After=network.target
 
 [Service]
 Type=simple
 ExecStart=/bin/bash -c "PATH=$PATH:/home/pi/.local/bin exec /home/pi/Documents/code/beam/run.sh"
+Restart=on-failure
+RestartSec=60
 WorkingDirectory=/home/pi
 User=pi
 Environment=HUE_BRIDGE_IP=<Your Hue Bridge IP>
 Environment=HUE_BRIDGE_USERNAME=<Your Hue Bridge Username>
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network.target
+```
+
+Then reload the daemon and enable the service. This will call `./run.sh` on system boot:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable lightthebeam.service
 ```
 
 Trigger the job manually with:
